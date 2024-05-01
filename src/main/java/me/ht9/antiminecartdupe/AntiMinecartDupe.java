@@ -2,7 +2,10 @@ package me.ht9.antiminecartdupe;
 
 import com.legacyminecraft.poseidon.event.PlayerReceivePacketEvent;
 import com.legacyminecraft.poseidon.event.PoseidonCustomListener;
+import net.minecraft.server.ContainerChest;
+import net.minecraft.server.ContainerPlayer;
 import net.minecraft.server.Packet101CloseWindow;
+import net.minecraft.server.Packet10Flying;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
@@ -11,6 +14,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -49,7 +53,7 @@ public class AntiMinecartDupe extends JavaPlugin implements Listener, PoseidonCu
 
             if (player != null && player.isOnline())
             {
-                if (Math.sqrt(event.getVehicle().getLocation().distanceSquared(player.getLocation())) > 6.0)
+                if (Math.sqrt(event.getVehicle().getLocation().distanceSquared(player.getLocation())) > 10.0)
                 {
                     player.sendPacket(player, new Packet101CloseWindow(((CraftPlayer) player).getHandle().activeContainer.windowId));
                 }
@@ -75,6 +79,19 @@ public class AntiMinecartDupe extends JavaPlugin implements Listener, PoseidonCu
                     this.playerMinecartMap.remove(player.getUniqueId());
                 }
             }
+        }
+    }
+
+    @EventHandler(priority = Event.Priority.Monitor)
+    public void onVehicleEnter(VehicleEnterEvent event)
+    {
+        if (event.isCancelled()) return;
+
+        ((CraftPlayer) event.getEntered()).sendPacket(((CraftPlayer) event.getEntered()), new Packet10Flying());
+
+        if (((CraftPlayer) event.getEntered()).getHandle().activeContainer instanceof ContainerChest)
+        {
+            event.setCancelled(true);
         }
     }
 
