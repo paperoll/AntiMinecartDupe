@@ -87,8 +87,6 @@ public class AntiMinecartDupe extends JavaPlugin implements Listener, PoseidonCu
     {
         if (event.isCancelled()) return;
 
-        ((CraftPlayer) event.getEntered()).sendPacket(((CraftPlayer) event.getEntered()), new Packet10Flying());
-
         if (((CraftPlayer) event.getEntered()).getHandle().activeContainer instanceof ContainerChest)
         {
             event.setCancelled(true);
